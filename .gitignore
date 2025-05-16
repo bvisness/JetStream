@@ -5,3 +5,8 @@
 # Ignore auto-generated files by VS & VSCode.
 /.vs/
 /.vscode/
+
+sm-perf.data
+v8-perf.data
+v8.log
+*.dump
