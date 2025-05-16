@@ -1,0 +1,3 @@
+[submodule "comparison-report-generator"]
+	path = comparison-report-generator
+	url = git@github.com:jrmuizel/comparison-report-generator.git
