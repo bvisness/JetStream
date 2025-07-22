@@ -23,24 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-let indirectEval = eval;
-class Benchmark {
-    async init() {
-        this.inspectorText = `let _____top_level_____ = ${Math.random()}; ${await getString(inspectorPayloadBlob)}`;
-
-        this.index = 0;
-    }
-
-    prepareForNextIteration() {
-        this.text = `function test${this.index}() { ${this.inspectorText} }`;
-        if (this.text[0] !== "f")
-            throw new Error;
-        if (this.text[this.text.length - 1] !== "}")
-            throw new Error;
-        ++this.index;
-    }
-
-    runIteration() {
-        indirectEval(this.text);
-    }
+const isInBrowser = false;
+console = {
+    log: globalThis?.console?.log ?? print,
+    error: globalThis?.console?.error ?? print,
 }
+
+const isD8 = typeof Realm !== "undefined";
+if (isD8)
+    globalThis.readFile = read;
+const isSpiderMonkey = typeof newGlobal !== "undefined";
+if (isSpiderMonkey) {
+    globalThis.readFile = readRelativeToScript;
+    globalThis.arguments = scriptArgs;
+}
+
+if (typeof arguments !== "undefined" && arguments.length > 0)
+    testList = arguments.slice();
+if (typeof testList === "undefined")
+    testList = undefined;
+
+if (typeof testIterationCount === "undefined")
+    testIterationCount = undefined;
+
+if (typeof runMode !== "undefined" && runMode == "RAMification")
+    RAMification = true;
+else
+    RAMification = false;
