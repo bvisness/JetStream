@@ -37,16 +37,3 @@ if (isSpiderMonkey) {
     globalThis.readFile = readRelativeToScript;
     globalThis.arguments = scriptArgs;
 }
-
-if (typeof arguments !== "undefined" && arguments.length > 0)
-    testList = arguments.slice();
-if (typeof testList === "undefined")
-    testList = undefined;
-
-if (typeof testIterationCount === "undefined")
-    testIterationCount = undefined;
-
-if (typeof runMode !== "undefined" && runMode == "RAMification")
-    RAMification = true;
-else
-    RAMification = false;
