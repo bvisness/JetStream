@@ -23188,7 +23188,7 @@
                                     });
                                 }
                                 function instantiateAsync() {
-                                    if (!wasmBinary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(wasmBinaryFile) && !isFileURI(wasmBinaryFile) && !ENVIRONMENT_IS_NODE && typeof fetch == "function") {
+                                    if (!JetStream.preload.wasmBinary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(wasmBinaryFile) && !isFileURI(wasmBinaryFile) && !ENVIRONMENT_IS_NODE && typeof fetch == "function") {
                                         return fetch(wasmBinaryFile, {
                                             credentials: "same-origin"
                                         }).then(function (response) {
@@ -23210,15 +23210,14 @@
                                     } catch (e) {
                                         // ************************ CHANGE START ************************
                                         let blob;
-                                        if (globalThis.tfjsBackendWasmSimdBlob || Module.tfjsBackendWasmSimdBlob) {
-                                            blob = globalThis.tfjsBackendWasmSimdBlob || Module.tfjsBackendWasmSimdBlob;
+                                        if (JetStream.preload.tfjsBackendWasmSimdBlob || Module.tfjsBackendWasmSimdBlob) {
+                                            blob = JetStream.preload.tfjsBackendWasmSimdBlob || Module.tfjsBackendWasmSimdBlob;
                                             // console.warn("shell tfjs instantiating wasm simd backend");
-                                        }  else if (globalThis.tfjsBackendWasmBlob || Module.tfjsBackendWasmBlob) {
-                                            blob = globalThis.tfjsBackendWasmBlob || Module.tfjsBackendWasmBlob;
+                                        }  else if (JetStream.preload.tfjsBackendWasmBlob || Module.tfjsBackendWasmBlob) {
+                                            blob = JetStream.preload.tfjsBackendWasmBlob || Module.tfjsBackendWasmBlob;
                                             // console.warn("shell tfjs instantiating wasm backend");
                                         } else
                                             console.warn("Fatal error: no binary file found for ./wasm/tfjs-backend-wasm-simd.wasm and ./wasm/tfjs-backend-wasm.wasm");
-
                                         WebAssembly.instantiate(blob, info).then(function (output) {
                                             receiveInstance(output.instance, output.module);
                                         });
