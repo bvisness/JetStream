@@ -1,9 +1,9 @@
 #!/bin/bash
-set -euo pipefail
-
-TEST=$1
+set -euxo pipefail
 
 SM_SHELL=${SM_SHELL:-js}
-SM_FLAGS=${SM_FLAGS:---enable-ic-frame-pointers --only-inline-selfhosted}
+SM_FLAGS=${SM_FLAGS:-}
 
-PERF_SPEW_DIR=/tmp IONPERF=ir-ops samply record $SM_SHELL $SM_FLAGS -e "testList = ['$TEST']" cli.js
+# For quicker runs, you may wish to use the following flags:
+# --iteration-count=2 --worst-case-count=1
+IONPERF=ir-graph PERF_SPEW_DIR=/tmp samply record $SM_SHELL $SM_FLAGS cli.js $@

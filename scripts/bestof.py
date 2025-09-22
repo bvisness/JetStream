@@ -35,14 +35,14 @@ def parse_scores(output):
 
     return scores
 
-def run_benchmark(js_file, runs):
+def run_benchmark(runs, tests):
     best_scores = defaultdict(float)
 
     for i in range(1, runs + 1):
         eprint(f"\n--- Run {i} ---")
         try:
             process = subprocess.Popen(
-                ["js", js_file],
+                ["js", "cli.js", *tests],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True
@@ -71,18 +71,18 @@ def run_benchmark(js_file, runs):
     return best_scores
 
 def main():
-    if len(sys.argv) < 3:
-        eprint(f"Usage: python {sys.argv[0]} <script.js> <num_runs>")
+    if len(sys.argv) < 2:
+        eprint(f"Usage: python {sys.argv[0]} <num runs> [<test case>...]")
         sys.exit(1)
 
-    js_file = sys.argv[1]
     try:
-        runs = int(sys.argv[2])
+        runs = int(sys.argv[1])
     except ValueError:
         eprint("Number of runs must be an integer.")
         sys.exit(1)
+    tests = sys.argv[2:]
 
-    best_scores = run_benchmark(js_file, runs)
+    best_scores = run_benchmark(runs, tests)
 
     writer = csv.writer(sys.stdout)
     writer.writerow(["Test Case", "Score"])
