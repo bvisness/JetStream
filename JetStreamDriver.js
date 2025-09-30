@@ -61,7 +61,7 @@ function displayCategoryScores() {
 function getIterationCount(plan) {
     if (JetStreamParams.testIterationCountMap.has(plan.name))
         return JetStreamParams.testIterationCountMap.get(plan.name);
-    if (JetStreamParams.testIterationCount)
+    if (JetStreamParams.testIterationCount !== undefined)
         return JetStreamParams.testIterationCount;
     if (plan.iterations)
         return plan.iterations;
@@ -71,7 +71,7 @@ function getIterationCount(plan) {
 function getWorstCaseCount(plan) {
     if (JetStreamParams.testWorstCaseCountMap.has(plan.name))
         return JetStreamParams.testWorstCaseCountMap.get(plan.name);
-    if (JetStreamParams.testWorstCaseCount)
+    if (JetStreamParams.testWorstCaseCount !== undefined)
         return JetStreamParams.testWorstCaseCount;
     if (plan.worstCaseCount !== undefined)
         return plan.worstCaseCount;

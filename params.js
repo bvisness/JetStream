@@ -74,7 +74,7 @@ class Params {
             this.testList = this._parseTestListParam(sourceParams, paramKey);
 
         this.testIterationCount = this._parseIntParam(sourceParams, "testIterationCount", 1);
-        this.testWorstCaseCount = this._parseIntParam(sourceParams, "testWorstCaseCount", 1);
+        this.testWorstCaseCount = this._parseIntParam(sourceParams, "testWorstCaseCount", 0);
 
         const unused = Array.from(sourceParams.keys());
         if (unused.length > 0)
