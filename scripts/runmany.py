@@ -20,6 +20,24 @@ def parse_scores(output):
             current_test = match.group(1)
             continue
 
+        match = re.match(r"^First:\s+([0-9.]+)", line)
+        if match and current_test:
+            score = float(match.group(1))
+            scores[current_test + " First"] = score
+            continue
+
+        match = re.match(r"^Worst:\s+([0-9.]+)", line)
+        if match and current_test:
+            score = float(match.group(1))
+            scores[current_test + " Worst"] = score
+            continue
+
+        match = re.match(r"^Average:\s+([0-9.]+)", line)
+        if match and current_test:
+            score = float(match.group(1))
+            scores[current_test + " Average"] = score
+            continue
+
         match = re.match(r"^Score:\s+([0-9.]+)", line)
         if match and current_test:
             score = float(match.group(1))
@@ -63,6 +81,9 @@ def run_benchmark(runs, tests):
             row = []
             for test in tests:
                 row.append(scores[test])
+                row.append(scores[test + " First"])
+                row.append(scores[test + " Worst"])
+                row.append(scores[test + " Average"])
             row.append(scores["Total Score"])
             result_rows.append(row)
 
@@ -86,7 +107,14 @@ def main():
     run_scores = run_benchmark(runs, tests)
 
     writer = csv.writer(sys.stdout)
-    writer.writerow([*tests, "Total Score"])
+    header_row = []
+    for test in tests:
+        header_row.append(test)
+        header_row.append(test + " First")
+        header_row.append(test + " Worst")
+        header_row.append(test + " Average")
+    header_row.append("Total Score")
+    writer.writerow(header_row)
     for run in run_scores:
         writer.writerow(run)
 
