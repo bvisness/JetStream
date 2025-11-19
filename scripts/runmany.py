@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+import csv
+import json
+import re
 import subprocess
 import sys
-import re
-import csv
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -59,7 +60,7 @@ def run_benchmark(runs, tests):
         eprint(f"\n--- Run {i} ---")
         try:
             process = subprocess.Popen(
-                ["js", "cli.js", *tests],
+                ["js", "cli.js", "--dump-json-results", *tests],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True
@@ -75,22 +76,24 @@ def run_benchmark(runs, tests):
                 eprint(f"[Run {i}] Script exited with code {process.returncode}", file=sys.stderr)
                 continue
 
-            output = ''.join(output_lines)
-            scores = parse_scores(output)
+            # after all, why shouldn't I? why shouldn't I print warnings on stdout?
+            output = "".join([x for x in output_lines if x.startswith("{")])
+            result = json.loads(output)["JetStream3.0"]
 
+            testnames = [] # yes this is recalculated every loop. no I do not care
             row = []
-            for test in tests:
-                row.append(scores[test])
-                row.append(scores[test + " First"])
-                row.append(scores[test + " Worst"])
-                row.append(scores[test + " Average"])
-            row.append(scores["Total Score"])
+            for testname, test in result["tests"].items():
+                testnames.append(testname)
+                row.append(test["metrics"]["Score"]["current"][0])
+                row.append(test["tests"].get("First", {}).get("metrics", {}).get("Time", {}).get("current", ["-"])[0])
+                row.append(test["tests"].get("Worst", {}).get("metrics", {}).get("Time", {}).get("current", ["-"])[0])
+                row.append(test["tests"].get("Average", {}).get("metrics", {}).get("Time", {}).get("current", ["-"])[0])
             result_rows.append(row)
 
         except Exception as e:
             eprint(f"[Run {i}] Error: {e}", file=sys.stderr)
 
-    return result_rows
+    return testnames, result_rows
 
 def main():
     if len(sys.argv) < 2:
@@ -104,18 +107,17 @@ def main():
         sys.exit(1)
     tests = sys.argv[2:]
 
-    run_scores = run_benchmark(runs, tests)
+    testnames, result_rows = run_benchmark(runs, tests)
 
     writer = csv.writer(sys.stdout)
     header_row = []
-    for test in tests:
+    for test in testnames:
         header_row.append(test)
         header_row.append(test + " First")
         header_row.append(test + " Worst")
         header_row.append(test + " Average")
-    header_row.append("Total Score")
     writer.writerow(header_row)
-    for run in run_scores:
+    for run in result_rows:
         writer.writerow(run)
 
 if __name__ == "__main__":
