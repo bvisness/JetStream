@@ -12,3 +12,8 @@ v8-perf.data
 v8.log
 *.dump
 *.wat
+
+# Decompressed files go here
+RexBench/FlightPlanner/waypoints.js
+SeaMonster/inspector-json-payload.js
+wasm/argon2/build/argon2.wasm

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-load("./shell-config.js");
+load("./utils/shell-config.js");
 
 const CLI_PARAMS = {
   __proto__: null,
@@ -41,7 +41,7 @@ const CLI_PARAMS = {
     param: "dumpJSONResults",
   },
   "dump-test-list": {
-    help: "Print test list instead of running.",
+    help: "Print the selected test list instead of running.",
     param: "dumpTestList",
   },
   ramification: {
@@ -51,6 +51,10 @@ const CLI_PARAMS = {
   "no-prefetch": {
     help: "Do not prefetch resources. Will add network overhead to measurements!",
     param: "prefetchResources",
+  },
+  "group-details": {
+    help: "Display detailed group items",
+    param: "groupDetails",
   },
   test: {
     help: "Run a specific test or comma-separated list of tests.",
@@ -64,7 +68,7 @@ const CLI_PARAMS = {
     help: "Start the benchmark automatically.",
     param: "startAutomatically",
   },
-  report: { help: "Report results to a server.", param: "shouldReport" },
+  report: { help: "Report results to a server.", param: "report" },
   "start-delay": {
     help: "Delay before starting the benchmark.",
     param: "startDelay",
@@ -116,12 +120,13 @@ if (cliArgs.length) {
 if (cliParams.size) 
     globalThis.JetStreamParamsSource = cliParams;
 
-load("./params.js");
+load("./utils/params.js");
 
 
 async function runJetStream() {
     if (!JetStreamParams.isDefault) {
-        console.warn(`Using non standard params: ${JSON.stringify(JetStreamParams, null, 2)}`)
+        const paramsDiff = JetStreamParams.nonDefaultParams;
+        console.warn(`Using non standard params: ${JSON.stringify(paramsDiff, null, 2)}`)
     }
     try {
         await JetStream.initialize();
