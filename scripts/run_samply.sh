@@ -4,6 +4,9 @@ set -euxo pipefail
 SM_SHELL=${SM_SHELL:-js}
 SM_FLAGS=${SM_FLAGS:-}
 
-# For quicker runs, you may wish to use the following flags:
-# --iteration-count=2 --worst-case-count=1
-IONPERF=ir-graph PERF_SPEW_DIR=/tmp samply record $SM_SHELL $SM_FLAGS cli.js $@
+SAMPLY_OPTS=${SAMPLY_OPTS:-}
+
+# To test first-run performance, use the following flags:
+# --iteration-count=1 --worst-case-count=0
+# IONPERF=func PERF_SPEW_DIR=/tmp samply record $SAMPLY_OPTS $SM_SHELL $SM_FLAGS cli.js $@
+IONPERF=ir-graph PERF_SPEW_DIR=/tmp samply record $SAMPLY_OPTS $SM_SHELL $SM_FLAGS cli.js $@
